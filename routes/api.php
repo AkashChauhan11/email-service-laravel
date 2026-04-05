@@ -11,4 +11,12 @@ Route::get('/health', function () {
     ]);
 });
 
+Route::get('/ping', function () {
+    return response()->json([
+        'success' => true,
+        'message' => 'API route is working',
+        'timestamp' => now()->toIso8601String(),
+    ]);
+});
+
 Route::post('/send-email', [EmailController::class, 'send']);
