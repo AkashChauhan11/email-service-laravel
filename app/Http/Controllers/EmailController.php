@@ -6,6 +6,7 @@ use App\Mail\AppMail;
 use App\Models\EmailLog;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
@@ -35,6 +36,7 @@ class EmailController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'app_key' => 'required|string',
+            'recaptcha_token' => 'required|string',
             'data' => 'required|array',
         ]);
 
@@ -43,6 +45,20 @@ class EmailController extends Controller
                 'success' => false,
                 'message' => 'Validation failed.',
                 'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        // Verify reCAPTCHA v2 token
+        $recaptchaResponse = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
+            'secret' => env('RECAPTCHA_SECRET_KEY'),
+            'response' => $request->recaptcha_token,
+            'remoteip' => $request->ip(),
+        ]);
+
+        if (!$recaptchaResponse->json('success')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'reCAPTCHA verification failed. Please try again.',
             ], 422);
         }
 
