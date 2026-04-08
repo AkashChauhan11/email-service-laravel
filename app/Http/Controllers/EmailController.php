@@ -19,7 +19,7 @@ class EmailController extends Controller
                 'name' => 'Sodha Marine Services',
                 'from_email' => 'info@elevateindustries.co.in',
                 'from_name' => 'Sodha Marine Services',
-                'to_email' => 'akashchauhan191311@gmail.com',
+                'to_email' => 'technical@sodhamarine.com',
                 'subject_prefix' => 'Contact Form Inquiry',
             ];
         }
